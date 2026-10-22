@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SUAS KKS : SISTEM UNDIAN ANUGERAH SINERGI 2026, KOLEJ KOMUNITI SEGAMAT</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ======================================================================
+       BANNER RASMI SISTEM (SAIZ STATIK & BEBAS SKROL)
+       ====================================================================== -->
+  <div class="banner-wrapper" id="bannerWrapper">
+    <img 
+      src="assets/banner.jpg" 
+      alt="SUAS KKS - Sistem Undian Anugerah Sinergi 2026 Kolej Komuniti Segamat" 
+      class="banner-img"
+      id="bannerImg"
+      onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/d/1ScN_qvfqXOiKn7ryTKoROLxK7V4VeDmh';"
+    />
+  </div>
+
+  <!-- ======================================================================
+       HEADER UTAMA & NAVIGASI MELEKAT (STICKY NAV)
+       ====================================================================== -->
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <div class="header-nav-bar">
+
+        <a href="javascript:void(0)" class="header-brand" onclick="switchPage('undian')">
+          <img src="assets/favicon.png" alt="SUAS Logo" class="brand-icon" />
+          <div>
+            <div class="brand-title">SUAS <span>KKS 2026</span></div>
+            <div class="brand-subtitle">Kolej Komuniti Segamat</div>
+          </div>
+        </a>
+
+        <!-- Live Real-Time Status Indicator -->
+        <div class="live-sync-indicator" id="headerLiveSync" onclick="refreshLiveData(true)" title="Data disegerak secara langsung dengan Google Sheets. Klik untuk muat semula.">
+          <span class="live-pulse-dot"></span>
+          <span id="liveSyncText">Google Sheets Real-Time</span>
+          <i class="fas fa-sync-alt" style="font-size: 0.7rem; margin-left: 2px;"></i>
+        </div>
+
+        <ul class="nav-links">
+          <li>
+            <button class="nav-btn active" data-page="undian" onclick="switchPage('undian')">
+              <i class="fas fa-vote-yea"></i> Laman Undian
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" data-page="dashboard" onclick="switchPage('dashboard')">
+              <i class="fas fa-chart-pie"></i> Dashboard Penyertaan
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" data-page="status" onclick="switchPage('status')">
+              <i class="fas fa-search"></i> Semak Status Saya
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn admin-nav-btn" onclick="openModal('adminLoginModal')">
+              <i class="fas fa-lock"></i> Portal Pentadbir
+            </button>
+          </li>
+          <li id="navAdminStatusContainer" style="display: none;">
+            <div id="navAdminStatusBadge" class="nav-admin-active-pill" onclick="switchPage('admin')" title="Sesi Pentadbir Aktif. Klik untuk buka Portal Pentadbir.">
+              <i class="fas fa-user-shield"></i> Pentadbir Aktif
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       BAR IDENTIFIKASI PENGUNDI (IC VERIFICATION STRIP)
+       ====================================================================== -->
+  <section class="voter-bar-section">
+    <div class="container" id="voterBarContainer">
+      <!-- Kandungan dijana secara dinamik oleh app.js -->
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       KANDUNGAN UTAMA (MAIN PAGES)
+       ====================================================================== -->
+  <main class="container">
+
+    <!-- PAGE 1: LAMAN UNDIAN ANUGERAH -->
+    <section id="page_undian" class="page-section active">
+      <div class="hero-intro">
+        <div class="hero-badge">
+          <i class="fas fa-star" style="color: var(--gold-light);"></i>
+          BENGKEL SINERGI KECEMERLANGAN (SINERGI 2026)
+        </div>
+        <h1 class="hero-title">Undian Anugerah <span>Sinergi KKS 2026</span></h1>
+        <p class="hero-desc">
+          Undi rakan sekerja anda yang paling cemerlang dan berdedikasi! Setiap staf layak mengundi 
+          <strong>satu (1) calon bagi setiap kategori</strong>. Statistik keluar mengundi dipaparkan bagi setiap kategori demi ketelusan, manakala keputusan undian calon adalah <strong>SULIT</strong> untuk Pentadbir sahaja.
+        </p>
+      </div>
+
+      <!-- Kategori Filter Tabs -->
+      <div class="filter-tabs-wrapper">
+        <button class="filter-tab-btn active" data-filter="all" onclick="setAwardFilter('all')">
+          <i class="fas fa-th-large"></i> Semua 9 Anugerah
+        </button>
+        <button class="filter-tab-btn" data-filter="admin" onclick="setAwardFilter('admin')">
+          <i class="fas fa-user-shield"></i> Kategori Staff Admin
+        </button>
+        <button class="filter-tab-btn" data-filter="pensyarah" onclick="setAwardFilter('pensyarah')">
+          <i class="fas fa-chalkboard-teacher"></i> Kategori Staff Pensyarah
+        </button>
+        <button class="filter-tab-btn" data-filter="open" onclick="setAwardFilter('open')">
+          <i class="fas fa-users"></i> Kategori Terbuka (Open)
+        </button>
+      </div>
+
+      <!-- Senarai Kad Anugerah -->
+      <div class="awards-grid" id="awardsGrid">
+        <!-- Render dinamik daripada app.js -->
+      </div>
+    </section>
+
+    <!-- PAGE 2: DASHBOARD PENYERTAAN AWAM -->
+    <section id="page_dashboard" class="page-section">
+      <div class="hero-intro">
+        <div class="hero-badge">
+          <i class="fas fa-broadcast-tower"></i> STATISTIK KELUAR MENGUNDI SEMASA
+        </div>
+        <h1 class="hero-title">Dashboard <span>Statistik Keluar Mengundi</span></h1>
+        <p class="hero-desc">
+          Paparan langsung peratusan dan bilangan staf Kolej Komuniti Segamat yang telah selesai keluar mengundi. Keputusan calon adalah sulit dan hanya boleh diakses oleh pentadbir.
+        </p>
+      </div>
+
+      <!-- Banner Pintasan Pentadbir (Hanya dipaparkan jika sesi Admin aktif) -->
+      <div id="dashboardAdminBanner" class="dashboard-admin-banner" style="display: none;">
+        <div class="dashboard-admin-banner-text">
+          <i class="fas fa-user-shield"></i>
+          <div>
+            <strong>Sesi Pentadbir Aktif:</strong>
+            <span style="display: block; font-size: 0.84rem; color: #cbd5e1; margin-top: 0.2rem;">
+              Anda mempunyai kebenaran penuh untuk melihat keputusan undian setiap calon, kedudukan Top 3, dan senarai pemenang rasmi.
+            </span>
+          </div>
+        </div>
+        <button class="btn-admin-action" style="background: #ef4444; color: #ffffff;" onclick="switchPage('admin')">
+          <i class="fas fa-trophy"></i> Buka Keputusan Penuh Calon di Portal Pentadbir
+        </button>
+      </div>
+
+      <!-- Kad Statistik Utama -->
+      <div class="stats-cards-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-data">
+            <div class="stat-title">Jumlah Staf Layak Mengundi</div>
+            <div class="stat-number" id="statTotalEligible">64</div>
+            <div class="stat-subtext">49 Pensyarah + 15 Admin</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <i class="fas fa-vote-yea"></i>
+          </div>
+          <div class="stat-data">
+            <div class="stat-title">Staf Telah Keluar Mengundi</div>
+            <div class="stat-number" id="statTotalVoted">0</div>
+            <div class="stat-subtext">Mengundi sekurang-kurangnya 1 kategori</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon purple">
+            <i class="fas fa-percentage"></i>
+          </div>
+          <div class="stat-data">
+            <div class="stat-title">Peratusan Keluar Mengundi</div>
+            <div class="stat-number" id="statTurnoutPercent">0%</div>
+            <div class="stat-subtext">Daripada keseluruhan warga KKS</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <i class="fas fa-user-tie"></i>
+          </div>
+          <div class="stat-data">
+            <div class="stat-title">Penyertaan Pensyarah vs Admin</div>
+            <div class="stat-number" style="font-size: 1.25rem; margin-top: 0.2rem;">
+              <span id="statAdminTurnout">0 / 15</span> Admin<br/>
+              <span id="statPensyarahTurnout">0 / 49</span> Pensyarah
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notis Kerahsiaan Undian Rasmi -->
+      <div class="confidentiality-notice-card">
+        <div class="notice-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="notice-text">
+          <h4>Kerahsiaan Keputusan Undian Dijamin Penuh</h4>
+          <p>
+            Keputusan penuh serta kedudukan calon (termasuk Top 3) adalah <strong>SULIT</strong> dan hanya boleh diakses 
+            oleh <strong>Pentadbir Sistem</strong>. Dashboard ini secara eksklusif memaparkan <strong>bilangan dan peratusan pengguna yang telah keluar mengundi</strong> bagi setiap kategori sahaja demi menjaga ketelusan dan integriti.
+          </p>
+        </div>
+      </div>
+
+      <!-- Bilangan Undian Mengikut Kategori -->
+      <div class="category-turnout-section">
+        <div class="section-headline">
+          <h3><i class="fas fa-chart-line" style="color: var(--gold-light); margin-right: 0.5rem;"></i> Statistik Keluar Mengundi Bagi Setiap Kategori</h3>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Sasaran Penuh: 64 Pengundi per Kategori &bull; Keputusan Calon Dirahsiakan</span>
+        </div>
+        <div class="turnout-grid" id="turnoutGrid">
+          <!-- Render dinamik daripada app.js -->
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- PAGE 3: SEMAK STATUS SAYA -->
+    <section id="page_status" class="page-section">
+      <div class="hero-intro">
+        <div class="hero-badge">
+          <i class="fas fa-user-check"></i> SEMAKAN KENDIRI
+        </div>
+        <h1 class="hero-title">Semak Status <span>Undian Saya</span></h1>
+        <p class="hero-desc">
+          Masukkan No. Kad Pengenalan anda untuk menyemak kategori anugerah yang telah diundi atau yang masih belum selesai.
+        </p>
+      </div>
+
+      <div class="lookup-card-container">
+        <h2>Semakan No. Kad Pengenalan</h2>
+        <p>Masukkan nombor kad pengenalan rasmi anda (dengan atau tanpa tanda sempang):</p>
+        
+        <div class="lookup-form">
+          <input 
+            type="text" 
+            id="lookupIcInput" 
+            class="lookup-input" 
+            placeholder="Contoh: 830614-03-5041 atau 830614035041" 
+            maxlength="14"
+          />
+          <button class="btn-lookup" onclick="lookupVoterStatus()">
+            <i class="fas fa-search"></i> Semak Sekarang
+          </button>
+        </div>
+
+        <div id="lookupResultContainer" class="lookup-results-box">
+          <!-- Keputusan carian IC dipaparkan di sini -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 4: PORTAL PENTADBIR (PASSWORD PROTECTED) -->
+    <section id="page_admin" class="page-section">
+      <div class="admin-header-strip">
+        <div class="admin-header-title">
+          <h2><i class="fas fa-user-shield" style="color: #ef4444;"></i> Portal Pentadbir SUAS KKS 2026</h2>
+          <div class="admin-status-indicator">
+            <i class="fas fa-check-circle" style="color: #34d399;"></i> Sesi Pentadbir Aktif (Mod Perlindungan Tinggi)
+          </div>
+        </div>
+
+        <div class="admin-action-btns">
+          <button class="btn-admin-action" onclick="generateDemoData()" title="Jana data ujian untuk melihat carta pemenang">
+            <i class="fas fa-magic"></i> Simulasi Data Ujian (45 Staf)
+          </button>
+          <button class="btn-admin-action primary" onclick="exportResultsToCSV()">
+            <i class="fas fa-file-csv"></i> Muat Turun CSV
+          </button>
+          <button class="btn-admin-action" onclick="printOfficialReport()">
+            <i class="fas fa-print"></i> Cetak Laporan
+          </button>
+          <button class="btn-admin-action danger" onclick="adminLogout()">
+            <i class="fas fa-sign-out-alt"></i> Log Keluar
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Navigasi Admin -->
+      <div class="admin-tabs-nav">
+        <button class="admin-tab-btn active" data-admin-tab="leaderboard" onclick="switchAdminTab('leaderboard')">
+          <i class="fas fa-trophy"></i> Keputusan Undian Penuh & Pemenang
+        </button>
+        <button class="admin-tab-btn" data-admin-tab="staff" onclick="switchAdminTab('staff')">
+          <i class="fas fa-users-cog"></i> Senarai 64 Staf & Status Undian
+        </button>
+        <button class="admin-tab-btn" data-admin-tab="awards" onclick="switchAdminTab('awards')">
+          <i class="fas fa-award"></i> Pengurusan Anugerah & Calon
+        </button>
+        <button class="admin-tab-btn" data-admin-tab="sheets" onclick="switchAdminTab('sheets')">
+          <i class="fas fa-table"></i> Tetapan Google Sheets
+        </button>
+        <button class="admin-tab-btn" data-admin-tab="logs" onclick="switchAdminTab('logs')">
+          <i class="fas fa-clipboard-list"></i> Log Audit & Reset
+        </button>
+      </div>
+
+      <!-- Tab 1: Live Leaderboard Keputusan Penuh -->
+      <div id="admin_tab_leaderboard" class="admin-tab-content active">
+        <div id="adminLeaderboardContainer">
+          <!-- Render dinamik daripada app.js -->
+        </div>
+      </div>
+
+      <!-- Tab 2: Senarai 64 Staf & Status Undian -->
+      <div id="admin_tab_staff" class="admin-tab-content">
+        <div class="staff-table-card">
+          <div class="staff-table-controls">
+            <div style="flex: 1; max-width: 320px;">
+              <input 
+                type="text" 
+                id="staffTableSearch" 
+                class="form-input" 
+                placeholder="Cari nama atau No. IC staf..." 
+                oninput="renderStaffStatusTable()"
+              />
+            </div>
+            <div style="display: flex; gap: 0.6rem;">
+              <select id="staffRoleFilter" class="form-input" style="width: auto;" onchange="renderStaffStatusTable()">
+                <option value="all">Semua Peranan</option>
+                <option value="Staff Admin">Staff Admin Sahaja (15)</option>
+                <option value="Staff Pensyarah">Staff Pensyarah Sahaja (49)</option>
+              </select>
+              <select id="staffStatusFilter" class="form-input" style="width: auto;" onchange="renderStaffStatusTable()">
+                <option value="all">Semua Status</option>
+                <option value="voted">Telah Mengundi</option>
+                <option value="complete">Selesai Semua Kategori</option>
+                <option value="unvoted">Belum Mengundi</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Bil</th>
+                <th>No. Kad Pengenalan</th>
+                <th>Nama Penuh Staf</th>
+                <th>Kategori / Peranan</th>
+                <th>Jantina</th>
+                <th>Kategori Diundi</th>
+                <th>Status Undian</th>
+                <th>Tindakan Pentadbir</th>
+              </tr>
+            </thead>
+            <tbody id="staffTableBody">
+              <!-- Render dinamik daripada app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 3: Pengurusan Anugerah & Calon -->
+      <div id="admin_tab_awards" class="admin-tab-content">
+        <div class="sheet-config-card">
+          <h3>Pengurusan 9 Anugerah Rasmi Sinergi KKS 2026</h3>
+          <p>
+            Pentadbir boleh membuka atau menutup proses pengundian bagi anugerah tertentu, 
+            serta mengubah suai senarai nama calon bagi setiap kategori.
+          </p>
+          <div id="adminAwardsManageContainer">
+            <!-- Render dinamik daripada app.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Tetapan Google Sheets & Apps Script -->
+      <div id="admin_tab_sheets" class="admin-tab-content">
+        <div class="sheet-config-card">
+          <h3>Integrasi Pangkalan Data Google Sheets</h3>
+          <p>
+            Sistem ini menggunakan Google Sheets sebagai pangkalan data awan. 
+            Ikuti panduan ringkas berikut untuk menyambungkan Google Sheet anda:
+          </p>
+
+          <div style="background: rgba(15, 29, 53, 0.7); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid var(--border-subtle); font-size: 0.9rem; line-height: 1.7;">
+            <strong>Langkah-langkah Persediaan Google Sheet:</strong><br/>
+            1. Buka fail <code>google_apps_script.js</code> (atau <code>Code.gs</code>) yang disediakan dalam folder sistem ini.<br/>
+            2. Di akaun Google anda, buka spreadsheet baru di Google Drive.<br/>
+            3. Klik <strong>Extensions (Sambungan) &gt; Apps Script</strong>, padam sebarang kod lalai, dan tampalkan keseluruhan kod daripada fail <code>Code.gs</code>.<br/>
+            4. Klik <strong>Deploy &gt; New deployment</strong>, pilih jenis <strong>Web app</strong>.<br/>
+            5. Tetapkan <em>Execute as:</em> <strong>Me</strong> dan <em>Who has access:</em> <strong>Anyone</strong>.<br/>
+            6. Klik Deploy, salin <strong>Web App URL</strong> yang dihasilkan (bermula dengan <code>https://script.google.com/macros/s/.../exec</code>) dan masukkan ke dalam kotak di bawah:
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Google Apps Script Web App URL:</label>
+            <div style="display: flex; gap: 0.75rem;">
+              <input 
+                type="text" 
+                id="googleAppsScriptUrlInput" 
+                class="form-input" 
+                placeholder="https://script.google.com/macros/s/.../exec"
+              />
+              <button class="btn-vote-submit" onclick="saveGoogleSheetUrl()">
+                <i class="fas fa-save"></i> Simpan URL
+              </button>
+            </div>
+            <span id="sheetSyncStatus" style="display: block; margin-top: 0.5rem; font-size: 0.82rem; color: var(--gold-light);">
+              Pangkalan Data Tempatan Aktif (Google Sheets sedia disambungkan)
+            </span>
+          </div>
+
+          <div style="margin-top: 1.5rem;">
+            <label class="form-label">Kod Google Apps Script (Sedia Disalin):</label>
+            <div class="code-box-display">
+// Kod penuh terdapat dalam fail Code.gs & google_apps_script.js
+// Salin kod daripada fail tersebut ke dalam Google Apps Script editor.
+// Kata laluan admin API: kks@123
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: Log Audit & Reset -->
+      <div id="admin_tab_logs" class="admin-tab-content">
+        <div class="sheet-config-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h3>Log Aktiviti & Audit Sistem</h3>
+            <button class="btn-admin-action danger" onclick="resetAllVotesData()">
+              <i class="fas fa-trash-alt"></i> Padam Semua Undian (Reset Sistem)
+            </button>
+          </div>
+          <p>Rekod jejak audit semua transaksi undian dan pengubahsuaian pentadbir:</p>
+
+          <div id="adminLogsList" style="max-height: 400px; overflow-y: auto; background: rgba(9, 19, 36, 0.8); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <!-- Render dinamik daripada app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       FOOTER
+       ====================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-logo-row">
+        <img src="assets/favicon.png" alt="SUAS Favicon" />
+        <span style="color: #ffffff; font-weight: 700; font-size: 1.05rem;">SUAS KKS 2026</span>
+      </div>
+      <div class="footer-tagline">
+        SISTEM UNDIAN ANUGERAH SINERGI 2026 &bull; KOLEJ KOMUNITI SEGAMAT
+      </div>
+      <p style="margin-top: 0.4rem; color: var(--text-muted); font-size: 0.8rem;">
+        Dibangunkan khusus untuk Majlis Anugerah Sinergi Kecemerlangan Kolej Komuniti Segamat &bull; TVET For All
+      </p>
+    </div>
+  </footer>
+
+  <!-- ======================================================================
+       MODAL: PENGESAHAN NO. KAD PENGENALAN
+       ====================================================================== -->
+  <div class="modal-overlay" id="icModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-id-card" style="color: var(--gold-light);"></i> Pengesahan Pengundi</h3>
+        <button class="modal-close-btn" onclick="closeModal('icModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">
+          Sila masukkan No. Kad Pengenalan anda untuk mengesahkan kelayakan mengundi. 
+          Sistem akan memadankan nombor IC anda dengan senarai 64 staf rasmi Kolej Komuniti Segamat.
+        </p>
+        <div class="form-group">
+          <label class="form-label">No. Kad Pengenalan (IC):</label>
+          <input 
+            type="text" 
+            id="modalIcInput" 
+            class="form-input" 
+            placeholder="Contoh: 830614-03-5041 atau 830614035041" 
+            maxlength="14"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-admin-action" onclick="closeModal('icModal')">Batal</button>
+        <button class="btn-vote-submit" onclick="verifyVoterIC(document.getElementById('modalIcInput').value, true)">
+          <i class="fas fa-check"></i> Sahkan & Mengundi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL: LOG MASUK PENTADBIR (PASSWORD kks@123)
+       ====================================================================== -->
+  <div class="modal-overlay" id="adminLoginModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-lock" style="color: #ef4444;"></i> Log Masuk Pentadbir</h3>
+        <button class="modal-close-btn" onclick="closeModal('adminLoginModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">
+          Akses kepada keputusan undian penuh, statistik pemenang, dan pengurusan anugerah terhad kepada pentadbir sahaja.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Kata Laluan Pentadbir:</label>
+          <input 
+            type="password" 
+            id="adminPasswordInput" 
+            class="form-input" 
+            placeholder="Masukkan kata laluan..."
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-admin-action" onclick="closeModal('adminLoginModal')">Batal</button>
+        <button class="btn-vote-submit" style="background: #ef4444; color: #ffffff;" onclick="attemptAdminLogin()">
+          <i class="fas fa-sign-in-alt"></i> Log Masuk Pentadbir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL: LIGHTBOX GAMBAR ANUGERAH (UNCROPPED PREVIEW)
+       ====================================================================== -->
+  <div class="modal-overlay image-zoom-modal" id="imageLightboxModal" onclick="closeModal('imageLightboxModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title" id="lightboxTitle">Gambar Anugerah</h3>
+        <button class="modal-close-btn" onclick="closeModal('imageLightboxModal')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1rem; text-align: center;">
+        <img src="" alt="" id="lightboxImg" class="image-zoom-display" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       SISTEM TOAST NOTIFICATION
+       ====================================================================== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Script Files -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
